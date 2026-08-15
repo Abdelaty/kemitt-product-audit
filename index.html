@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kemitt product audit</title>
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --card: #161616;
+      --border: #2a2a2a;
+      --text: #f3f3f3;
+      --muted: #9a9a9a;
+      --amber: #e8a317;
+      --red: #e24b4a;
+      --blue: #4c8dff;
+      --green: #3d9a6a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 40px 24px 80px; }
+    h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin: 0 0 8px; }
+    h2 { font-size: 18px; margin: 36px 0 10px; }
+    h3 { font-size: 14px; margin: 0 0 8px; }
+    p { margin: 0 0 10px; }
+    .sub { color: var(--muted); font-size: 14px; max-width: 720px; }
+    .tiny { color: var(--muted); font-size: 12px; }
+    .callout {
+      border: 1px solid #5c4300;
+      background: #1c1608;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 20px 0;
+    }
+    .callout .t { color: var(--amber); font-weight: 650; margin-bottom: 6px; }
+    .callout.info { border-color: #1e3a5f; background: #101820; }
+    .callout.info .t { color: var(--blue); }
+    .scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .stat .n { font-size: 36px; font-weight: 700; letter-spacing: -1px; }
+    .stat .l { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .warn .n { color: var(--amber); }
+    .bad .n { color: var(--red); }
+    .funnel { display: flex; gap: 12px; align-items: flex-end; height: 180px; margin: 16px 0 8px; }
+    .bar-col { flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+    .bar {
+      background: var(--blue);
+      border-radius: 6px 6px 0 0;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      padding-top: 8px;
+      min-height: 28px;
+    }
+    .bar-lab { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .pie {
+      width: 160px; height: 160px; border-radius: 50%;
+      background: conic-gradient(#4c8dff 0 128.6deg, #e8a317 128.6deg 244.3deg, #7aa2c4 244.3deg 360deg);
+      margin: 12px auto;
+    }
+    .legend { font-size: 12px; color: var(--muted); }
+    .legend span { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+    .sev-bars { display: flex; gap: 16px; align-items: flex-end; height: 120px; }
+    .sev-bars .b { flex: 1; background: var(--amber); border-radius: 6px 6px 0 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; font-weight: 700; font-size: 12px; }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 18px 0 10px; }
+    .pill {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .pill.on { background: #2a2a2a; border-color: #555; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--border); padding: 8px 8px 8px 0; }
+    td { padding: 10px 8px 10px 0; border-bottom: 1px solid #222; vertical-align: top; }
+    tr.p0 td:first-child { color: var(--red); font-weight: 700; }
+    tr.p1 td:first-child { color: var(--amber); font-weight: 700; }
+    tr.p2 td:first-child { color: var(--blue); font-weight: 700; }
+    details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin: 8px 0; }
+    summary { cursor: pointer; font-weight: 600; }
+    .todo { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 6px 0; }
+    .todo li { list-style: none; padding: 10px 16px; border-bottom: 1px solid #222; font-size: 13px; }
+    .todo li:last-child { border-bottom: 0; }
+    code { font-size: 12px; color: #c8c8c8; }
+    hr { border: 0; border-top: 1px solid var(--border); margin: 28px 0; }
+    @media (max-width: 720px) {
+      .scores, .grid2, .grid3 { grid-template-columns: 1fr 1fr; }
+      .grid3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Kemitt product audit</h1>
+    <p class="sub">Flutter furniture marketplace (Egypt + Saudi), version 3.0.8+314. Static review of 369 Dart files — performance, checkout conversion, and shopper UX. Not production telemetry.</p>
+
+    <div class="callout">
+      <div class="t">Biggest leak</div>
+      Shoppers can add to a guest cart, but checkout jumps to the Account tab with no sign-in prompt, and checkout itself can omit a missing address. That is the highest-revenue defect in this codebase.
+    </div>
+
+    <div class="scores">
+      <div class="stat warn"><div class="n">52</div><div class="l">Overall (code review)</div></div>
+      <div class="stat bad"><div class="n">46</div><div class="l">Performance</div></div>
+      <div class="stat warn"><div class="n">51</div><div class="l">UX</div></div>
+      <div class="stat warn"><div class="n">58</div><div class="l">Business</div></div>
+    </div>
+    <p class="tiny">Scores are qualitative from this review (0–100). Dual-market catalog, Elasticsearch, KSA BNPL, and add-to-cart polish pull the commercial score up; splash waterfall, image memory, and the checkout wall pull the rest down.</p>
+
+    <h2>Conversion funnel health</h2>
+    <p class="tiny">Source: code review of kemitt 3.0.8+314 · 15 Aug 2026 · scale is reviewer judgment of implemented vs missing conversion mechanics, not live conversion rate.</p>
+    <div class="funnel">
+      <div class="bar-col"><div class="bar" style="height:72%">72</div><div class="bar-lab">Discovery</div></div>
+      <div class="bar-col"><div class="bar" style="height:61%">61</div><div class="bar-lab">PDP</div></div>
+      <div class="bar-col"><div class="bar" style="height:54%">54</div><div class="bar-lab">Cart</div></div>
+      <div class="bar-col"><div class="bar" style="height:38%">38</div><div class="bar-lab">Checkout</div></div>
+      <div class="bar-col"><div class="bar" style="height:42%">42</div><div class="bar-lab">Retention</div></div>
+    </div>
+
+    <div class="grid2" style="margin-top:28px">
+      <div>
+        <h3>Findings by domain</h3>
+        <div class="pie"></div>
+        <p class="legend"><span style="background:#4c8dff"></span>Performance 10 &nbsp; <span style="background:#e8a317"></span>UX 9 &nbsp; <span style="background:#7aa2c4"></span>Business 9</p>
+        <p class="tiny">Count of ranked findings in this review · n=28</p>
+      </div>
+      <div>
+        <h3>Findings by severity</h3>
+        <div class="sev-bars">
+          <div><div class="b" style="height:90px;background:var(--red)">9</div><div class="bar-lab">P0</div></div>
+          <div><div class="b" style="height:120px">15</div><div class="bar-lab">P1</div></div>
+          <div><div class="b" style="height:40px;background:var(--blue)">4</div><div class="bar-lab">P2</div></div>
+        </div>
+        <p class="tiny">P0 blocks conversion or causes jank/OOM · P1 leaks revenue or retention · P2 polish</p>
+      </div>
+    </div>
+
+    <hr />
+    <h2>What is already strong</h2>
+    <div class="grid3">
+      <div class="card"><h3>Discovery</h3><p class="tiny">Elasticsearch search, collections, Egypt filters, deep links for kemitt.com / kemitt.sa, designer/vendor pages.</p></div>
+      <div class="card"><h3>Commerce core</h3><p class="tiny">Variant PDP, guest fake cart, coupons, KSA Tabby/Tamara, COD, delivery-day estimates, bilingual AR/EN.</p></div>
+      <div class="card"><h3>Craft</h3><p class="tiny">Add-to-cart sheet + haptics, image shimmer, paginated PLP, offline gate, Sentry/Crashlytics/Analytics wired.</p></div>
+    </div>
+
+    <hr />
+    <div class="pills">
+      <strong style="font-size:12px">Domain</strong>
+      <button class="pill on" data-d="all">All</button>
+      <button class="pill" data-d="performance">Performance</button>
+      <button class="pill" data-d="ux">UX</button>
+      <button class="pill" data-d="business">Business</button>
+      <strong style="font-size:12px;margin-left:8px">Severity</strong>
+      <button class="pill on" data-s="all">All</button>
+      <button class="pill" data-s="P0">P0</button>
+      <button class="pill" data-s="P1">P1</button>
+      <button class="pill" data-s="P2">P2</button>
+    </div>
+    <p class="sub" id="count"></p>
+    <table>
+      <thead><tr><th>Sev</th><th>Domain</th><th>Finding</th><th>Why it matters</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+
+    <h2>Evidence and fixes</h2>
+    <p class="tiny">Expand a finding for evidence and the recommended fix.</p>
+    <div id="details"></div>
+
+    <hr />
+    <h2>Suggested 90-day order</h2>
+    <ul class="todo">
+      <li>Week 1: Guest checkout / login sheet, checkout address empty state, FIRST_TIME onboarding, KSA purchase currency</li>
+      <li>Week 2: translate() cache, splash to Home with skeletons, hoist GraphQL client, memCacheWidth on CustomImage</li>
+      <li>Weeks 3–4: Search empty/error, Collections icon swap, installment badge gating, begin_checkout + payment analytics, Sentry replay 1–5%</li>
+      <li>Month 2: Real reviews, unify EG/SA filters, push deep links, coupon before payment, R8 + drop integration_test from release</li>
+      <li>Month 3: Referral capture, KSA cart upsells, recently viewed, reorder, 48dp a11y pass, custom performance traces</li>
+    </ul>
+
+    <h2>Architecture snapshot</h2>
+    <table>
+      <thead><tr><th>Layer</th><th>Choice</th><th>Audit note</th></tr></thead>
+      <tbody>
+        <tr><td>State</td><td>14 ChangeNotifiers + Provider</td><td>Wide context.watch on Home and product cards causes grid-wide rebuilds</td></tr>
+        <tr><td>Nav</td><td>go_router + indexedStack tabs</td><td>Tabs stay alive (good UX, higher baseline memory)</td></tr>
+        <tr><td>API</td><td>GraphQL (catalog) + Chopper (cart/orders)</td><td>Client rebuilt in build(); no timeout/retry link</td></tr>
+        <tr><td>Markets</td><td>EG (EGP) + SA (SAR)</td><td>KSA payments hardcoded; Egypt from GraphQL; filters diverge</td></tr>
+        <tr><td>Observability</td><td>Sentry, Crashlytics, Analytics, Clarity, Facebook</td><td>Replay 100%; KSA purchase value wrong; Mixpanel keys unused</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info" style="margin-top:28px">
+      <div class="t">Scope</div>
+      Reviewed the Flutter app at Desktop/work/kemitt. Website, CMS, and backend GraphQL resolvers were not in this repo. Connected Sentry org (delatylabs) has no Kemitt project, so this page does not include live crash or trace rates.
+    </div>
+    <p class="tiny">Source: lib/, android/app/build.gradle, pubspec.yaml · Kemitt 3.0.8+314 · 15 Aug 2026</p>
+  </div>
+  <script>
+    const FINDINGS = [
+      {severity:"P0",domain:"business",title:"Guest checkout is a dead end",impact:"Highest-intent users tap Next step and land on the Account tab with no login prompt. Fake cart already works; the wall is only at checkout.",evidence:"_jumpToLoginScreen() only calls goToTab(context, 4).",file:"lib/screens/cart/Cart.dart:473",fix:"Show a sign-in sheet with return path to checkout. Prefer guest checkout (email + phone + address) and merge the fake cart after account creation."},
+      {severity:"P0",domain:"ux",title:"Checkout hides a missing shipping address",impact:"Complete Order still renders when address is null. Users can attempt payment with nowhere to deliver a sofa.",evidence:"AddressContainer only if address != null; else SizedBox().",file:"lib/screens/checkout/checkout_screen.dart:162",fix:"Empty-state CTA to add an address. Disable the order FAB until address and payment method are valid."},
+      {severity:"P0",domain:"ux",title:"First-run intro never shows",impact:"FIRST_TIME defaults to false and is never set true. New users skip country/language onboarding and may browse the wrong catalog (EG vs SA).",evidence:"getBool(FIRST_TIME) ?? false; only IntroSlider writes the flag (to false).",file:"lib/screens/SplashScreen.dart:251",fix:"Treat unset as first run. Collect country + language before Home. Persist once."},
+      {severity:"P0",domain:"business",title:"KSA purchases log Egypt price",impact:"Firebase/Meta ROAS for Saudi is wrong. logPurchase always uses totalPriceEg even when the order is SAR.",evidence:"cartTotalPrice = cart.totalPriceEg!.toDouble();",file:"lib/providers/analytics/AnalyticsProvider.dart:219",fix:"Branch on settingProvider.isSaudi for value and currency, matching startCheckout."},
+      {severity:"P0",domain:"performance",title:"Every translate() reloads language JSON",impact:"~270 call sites fire an async asset load + json.decode on the UI isolate. Jank and racey string maps during scroll and checkout.",evidence:"translate() calls initialize() which loadString + json.decode every time.",file:"lib/providers/dependency_manager/localization_provider/localization_providers/ApplicationLocalizations.dart:31",fix:"Load once in the LocalizationsDelegate. Make translate() a map lookup."},
+      {severity:"P0",domain:"performance",title:"Splash blocks Home on 10+ network calls",impact:"Time-to-shop waits on auth, cart, four home feeds, then five settings/banner/collection calls. First session feels slow on Egyptian mobile networks.",evidence:"_initializeServices awaits feeds then website settings before _decideRoute.",file:"lib/screens/SplashScreen.dart:115",fix:"Route after auth/country. Stream home sections in with skeletons. Keep legal/push deferred."},
+      {severity:"P0",domain:"performance",title:"GraphQL client rebuilt inside build()",impact:"Watching auth/locale/country reconstructs GraphQLClient + HiveStore, dropping cache and reconnecting.",evidence:"ClientProvider constructed inside _MyAppState.build after context.watch.",file:"lib/app.dart:174",fix:"Hoist the client. Refresh token without tearing down the widget."},
+      {severity:"P0",domain:"performance",title:"Product images decode at full resolution",impact:"Furniture photography is huge. CachedNetworkImage never sets memCacheWidth/Height. Grids will OOM and scroll-jank on mid-range Androids.",evidence:"No memCacheWidth/Height anywhere in lib/. CustomImage passes raw CDN URLs.",file:"lib/widgets/CustomImage.dart:88",fix:"Decode to display size. Request resized CDN URLs. Replace remaining Image.network calls."},
+      {severity:"P0",domain:"business",title:"No real product reviews",impact:"Furniture is high-consideration. ProductReviewCard is hardcoded placeholder copy. Order review UI is unused.",evidence:"ProductRate builds const ProductReviewCard() with fake name/price.",file:"lib/widgets/ProductReviewCard.dart:62",fix:"Ratings on PLP/PDP. Post-delivery review prompt from orders."},
+      {severity:"P1",domain:"ux",title:"Search failure looks like an empty app",impact:"Zero hits and API errors both render Container(). Users assume search is broken.",evidence:"queryResultSet.isEmpty → Container(); catch clears results with no message.",file:"lib/screens/SearchScreen.dart:136",fix:"Localized empty state, suggested categories, retry. Keep recent searches."},
+      {severity:"P1",domain:"business",title:"PDP always promises monthly installments",impact:"Badge is unconditional. KSA methods are hardcoded (PayTabs/Tabby/Tamara/COD); Egypt comes from GraphQL. Trust breaks if checkout does not match the badge.",evidence:"BadgesRow always shows monthlyInstallment. PaymentRepository hardcodes SAUDI_PAYMENT_LIST for KSA.",file:"lib/screens/detailed_product/widgets/badges_row.dart:46",fix:"Show the badge only when an installment method is available for that market and cart total."},
+      {severity:"P1",domain:"performance",title:"Home rebuilds on every ProductsProvider notify",impact:"Splash fires ~19 notifyListeners while four feeds load. Entire CustomScrollView rebuilds each time.",evidence:"context.watch<ProductsProvider>() at top of Home.build.",file:"lib/screens/Home.dart:204",fix:"Selector/Consumer per section. Batch provider updates."},
+      {severity:"P1",domain:"performance",title:"29 shrinkWrap lists inside scroll views",impact:"Nested ListView/GridView with shrinkWrap lays out every child. CategoryBannerList builds all tiles eagerly.",evidence:"29 shrinkWrap: true usages, including Home and CollectionGrid.",file:"lib/screens/Home.dart:643",fix:"SliverList/SliverGrid. GridView.builder for categories."},
+      {severity:"P1",domain:"performance",title:"Every product card watches the whole wishlist",impact:"Toggling one heart rebuilds every visible ProductCard.",evidence:"context.watch<UserProfileProvider>().isFavourite(primaryImageId)",file:"lib/widgets/product_card/product_card.dart:50",fix:"Selector keyed by image id, or pass isFav from a parent selector."},
+      {severity:"P1",domain:"ux",title:"KSA catalog filters are weaker than Egypt",impact:"Egypt gets price slider and attribute filters. Saudi uses a simpler tag/dialog path. Discovery quality splits by market.",evidence:"ProductsScreen branches; FilterScreen is Egypt-centric.",file:"lib/screens/ProductsScreen.dart",fix:"One filter UI. Gate capabilities on catalog fields, not country."},
+      {severity:"P1",domain:"ux",title:"Collections tab icons are swapped",impact:"Selected tab looks unselected. Wayfinding trust drops on every session.",evidence:"activeIcon: newUnselectedOffers, inactiveIcon: newSelectedOffers",file:"lib/screens/MainScreen.dart:122",fix:"Swap the two icon assignments."},
+      {severity:"P1",domain:"ux",title:"Accessibility is almost absent",impact:"Two Semantics usages in the whole app. Bottom-nav icons are 15×15. Labels go down to 6–8px. Screen readers cannot shop.",evidence:"MainScreen icon size; DefaultTextProvider tiny styles; no semanticLabel on cart/add-to-cart.",file:"lib/screens/MainScreen.dart",fix:"48dp targets, Semantics on controls, respect text scaler."},
+      {severity:"P1",domain:"ux",title:"Critical errors are English-only",impact:"Arabic users see Failed to load product, Error loading cart, No orders available at the worst moments.",evidence:"Hardcoded strings in DetailedProductScreen, Cart, checkout, MyOrders, Splash.",file:"lib/screens/DetailedProductScreen.dart",fix:"Move copy into ar.json / en.json. Never concatenate Error: ${e} into UI."},
+      {severity:"P1",domain:"performance",title:"Sentry replay samples 100% of sessions",impact:"sessionSampleRate 1.0 plus Clarity in release is CPU, memory, and bandwidth on every shopper. Traces are a sensible 10%.",evidence:"options.experimental.replay.sessionSampleRate = 1.0",file:"lib/main.dart:67",fix:"Replay at 1–5%. Keep error replay higher. Confirm Clarity is sampled."},
+      {severity:"P1",domain:"performance",title:"Release Android is unminified and ships test code",impact:"minifyEnabled false, shrinkResources false, releaseImplementation integration_test. Larger downloads, slower cold start.",evidence:"android/app/build.gradle release block.",file:"android/app/build.gradle:66",fix:"Enable R8. Drop integration_test from release. ABI-filter to arm64/armeabi-v7a."},
+      {severity:"P1",domain:"business",title:"Push taps do not open a screen",impact:"onMessageOpenedApp only debugPrints. Cart-abandon and promo campaigns cannot recover sessions.",evidence:"FirebaseMessaging.onMessageOpenedApp.listen → debugPrint('Message clicked!')",file:"lib/utilities/FirebasePushNotifications.dart:63",fix:"Route payloads through DeepLinkService (already used for kemitt.com / kemitt.sa)."},
+      {severity:"P1",domain:"business",title:"Checkout screen never logs begin_checkout",impact:"Funnel under-counts drops between cart CTA and payment. No add_payment_info either.",evidence:"startCheckout only in Cart._jumpToPaymentScreen.",file:"lib/screens/cart/Cart.dart:371",fix:"Fire logBeginCheckout on checkout mount. Log payment method selection."},
+      {severity:"P1",domain:"business",title:"Coupons blocked until payment method is chosen",impact:"Paid/coupon traffic cannot see the discount until they pick a method. Extra drop-off on a high-AOV cart.",evidence:"Apply button errors if selectedPaymentMethod == null.",file:"lib/screens/checkout/components/promo_code_section.dart:80",fix:"Apply coupon first; revalidate when the method changes."},
+      {severity:"P1",domain:"business",title:"Referral economics exist with no app UX",impact:"WebsiteSettings has referralCodeDiscount / referralCodeProfit. Account and checkout never capture or share a code.",evidence:"Fields in WebsiteSettings; no referral UI under lib/screens.",file:"lib/models/WebsiteSettings.dart",fix:"Code field at signup/checkout. Share sheet on the thank-you screen."},
+      {severity:"P2",domain:"ux",title:"Empty cart has no browse button",impact:"Wishlist empty state has Continue shopping. Cart does not. Dead tab.",evidence:"Empty cart copy only; Wishlist has a CTA.",file:"lib/screens/cart/Cart.dart",fix:"Primary button → Home or offers collection."},
+      {severity:"P2",domain:"ux",title:"Buy Now can send users to add-address incorrectly",impact:"Highest-intent PDP CTA may open MyAddress with ADD_ADDRESS even when addresses exist.",evidence:"_handleRouting / _jumpToMyAddressScreen in DetailedProductScreen.",file:"lib/screens/DetailedProductScreen.dart",fix:"Go to checkout when an address exists; add-address only when the list is empty."},
+      {severity:"P2",domain:"business",title:"Cart upsells are Egypt-only",impact:"Lower AOV in Saudi. The carousel is gated with !isSaudi.",evidence:"if (!settingProvider.isSaudi) UpSellingProducts()",file:"lib/screens/cart/Cart.dart:240",fix:"Enable You may also like for both markets; add PDP related items."},
+      {severity:"P2",domain:"performance",title:"GoRouter diagnostics on in release",impact:"debugLogDiagnostics: true logs every route in production. No custom Firebase Performance traces around splash or PLP.",evidence:"app.dart router setup.",file:"lib/app.dart:78",fix:"Gate with kDebugMode. Trace splash, home feeds, and pagination."}
+    ];
+    let domain = "all", severity = "all";
+    function filtered() {
+      return FINDINGS.filter(f => (domain === "all" || f.domain === domain) && (severity === "all" || f.severity === severity));
+    }
+    function render() {
+      const list = filtered();
+      document.getElementById("count").textContent = list.length + " finding" + (list.length === 1 ? "" : "s") + (domain !== "all" ? " · " + domain : "") + (severity !== "all" ? " · " + severity : "");
+      document.getElementById("rows").innerHTML = list.map(f => `<tr class="${f.severity.toLowerCase()}"><td>${f.severity}</td><td>${f.domain}</td><td>${f.title}</td><td>${f.impact}</td></tr>`).join("");
+      document.getElementById("details").innerHTML = list.map(f => `<details><summary>${f.severity}  ${f.title} <span class="tiny">${f.domain}</span></summary><p>${f.impact}</p><p class="tiny">${f.evidence}</p><p class="tiny"><code>${f.file}</code></p><p class="tiny">${f.fix}</p></details>`).join("");
+    }
+    document.querySelectorAll(".pill").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (btn.dataset.d) {
+          domain = btn.dataset.d;
+          document.querySelectorAll("[data-d]").forEach(b => b.classList.toggle("on", b === btn));
+        }
+        if (btn.dataset.s) {
+          severity = btn.dataset.s;
+          document.querySelectorAll("[data-s]").forEach(b => b.classList.toggle("on", b === btn));
+        }
+        render();
+      });
+    });
+    render();
+  </script>
+</body>
+</html>
