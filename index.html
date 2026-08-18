@@ -98,7 +98,7 @@
       <h1>Kemitt speed and product audit</h1>
       <span class="pill active">18 Aug 2026</span>
     </div>
-    <p class="sub">Bitbucket kemitt-api, kemitt-website, kemitt-dashboard, and the Flutter client of api.kemitt.com / api.kemitt.sa. Code review of latency and conversion. No production traces. No credit for unreported mobile work.</p>
+    <p class="sub">Bitbucket kemitt-api, kemitt-website, kemitt-dashboard, and the Flutter client of api.kemitt.com / api.kemitt.sa. Code review of latency and conversion. No production traces.</p>
 
     <div class="callout">
       The shop is slow because kemitt-api writes Redis for home/PDP/categories and never reads it, list aggregations join the whole catalog before pagination, and every product card re-queries offers. Flutter splash still waits on ~10 GraphQL calls. kemitt.com SSR fans out seven more. Furniture photos are original files on the CDN.
@@ -168,17 +168,17 @@
       <tbody id="fixes"></tbody>
     </table>
 
-    <h2>Hours to report (no mobile work started)</h2>
+    <h2>Expected hours for these tickets</h2>
     <div class="hours">
       <div class="card">
         <h3>Speed (API + web + app)</h3>
         <div class="v danger" style="font-size:28px;font-weight:700">96–140</div>
-        <p class="tiny">Turn Redis reads on, paginate aggregations, kill card N+1, slim list GraphQL, CDN image sizes, ES search, splash after auth, R8. First number for the business owner.</p>
+        <p class="tiny">Turn Redis reads on, paginate aggregations, kill card N+1, slim list GraphQL, CDN image sizes, ES search, splash after auth, R8. Expected effort for the speed tickets.</p>
       </div>
       <div class="card">
         <h3>Conversion + security on kemitt-api</h3>
         <div class="v warn" style="font-size:28px;font-weight:700">160–200</div>
-        <p class="tiny">SAR payment, guest checkout, reviews contract, register/JWT/PII, cart ownership. Separate from speed.</p>
+        <p class="tiny">SAR payment, guest checkout, reviews contract, register/JWT/PII, cart ownership. Expected effort for the conversion and security tickets.</p>
       </div>
     </div>
 
@@ -195,7 +195,7 @@
         <tr><td>Dashboard cap 50–100; stop limit 10000</td><td>8</td><td>Stops ops from melting shop Mongo</td></tr>
       </tbody>
     </table>
-    <p class="tiny">All-in if speed and conversion ship together: about 260–340 hours. Do speed first — Redis reads and aggregation order are the cheapest wins.</p>
+    <p class="tiny">Expected total if both ticket sets are taken: about 260–340 hours. Do speed first — Redis reads and aggregation order are the cheapest wins.</p>
 
     <h2>Do this in order</h2>
     <ol class="todo">
