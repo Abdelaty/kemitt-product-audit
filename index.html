@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kemitt product audit</title>
+  <title>Kemitt speed and product audit — August 2026</title>
   <style>
     :root {
       --bg: #0e0e0e;
@@ -27,244 +27,223 @@
     .wrap { max-width: 980px; margin: 0 auto; padding: 40px 24px 80px; }
     h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin: 0 0 8px; }
     h2 { font-size: 18px; margin: 36px 0 10px; }
-    h3 { font-size: 14px; margin: 0 0 8px; }
+    h3 { font-size: 14px; margin: 24px 0 8px; }
     p { margin: 0 0 10px; }
     .sub { color: var(--muted); font-size: 14px; max-width: 720px; }
     .tiny { color: var(--muted); font-size: 12px; }
+    .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .pill {
+      display: inline-block;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+    }
+    .pill.active { background: #1f2a3d; border-color: #35507a; color: var(--text); }
     .callout {
-      border: 1px solid #5c4300;
-      background: #1c1608;
+      border: 1px solid #5c2a2a;
+      background: #1c1010;
       border-radius: 10px;
       padding: 14px 16px;
       margin: 20px 0;
     }
-    .callout .t { color: var(--amber); font-weight: 650; margin-bottom: 6px; }
-    .callout.info { border-color: #1e3a5f; background: #101820; }
-    .callout.info .t { color: var(--blue); }
-    .scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+    .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 18px 0 8px; }
+    @media (max-width: 800px) { .stats { grid-template-columns: repeat(3, 1fr); } }
     .stat {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 12px;
     }
-    .stat .n { font-size: 36px; font-weight: 700; letter-spacing: -1px; }
-    .stat .l { color: var(--muted); font-size: 12px; margin-top: 4px; }
-    .warn .n { color: var(--amber); }
-    .bad .n { color: var(--red); }
-    .funnel { display: flex; gap: 12px; align-items: flex-end; height: 180px; margin: 16px 0 8px; }
-    .bar-col { flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
-    .bar {
-      background: var(--blue);
-      border-radius: 6px 6px 0 0;
-      color: #fff;
-      font-weight: 700;
-      font-size: 13px;
-      padding-top: 8px;
-      min-height: 28px;
-    }
-    .bar-lab { font-size: 12px; color: var(--muted); margin-top: 8px; }
-    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-    .pie {
-      width: 160px; height: 160px; border-radius: 50%;
-      background: conic-gradient(#4c8dff 0 128.6deg, #e8a317 128.6deg 244.3deg, #7aa2c4 244.3deg 360deg);
-      margin: 12px auto;
-    }
-    .legend { font-size: 12px; color: var(--muted); }
-    .legend span { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
-    .sev-bars { display: flex; gap: 16px; align-items: flex-end; height: 120px; }
-    .sev-bars .b { flex: 1; background: var(--amber); border-radius: 6px 6px 0 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; font-weight: 700; font-size: 12px; }
-    .pills { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 18px 0 10px; }
-    .pill {
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text);
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .pill.on { background: #2a2a2a; border-color: #555; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { text-align: left; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--border); padding: 8px 8px 8px 0; }
-    td { padding: 10px 8px 10px 0; border-bottom: 1px solid #222; vertical-align: top; }
+    .stat .v { font-size: 22px; font-weight: 700; }
+    .stat .l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .warn { color: var(--amber); }
+    .danger { color: var(--red); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0 18px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; }
     tr.p0 td:first-child { color: var(--red); font-weight: 700; }
     tr.p1 td:first-child { color: var(--amber); font-weight: 700; }
-    tr.p2 td:first-child { color: var(--blue); font-weight: 700; }
-    details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin: 8px 0; }
-    summary { cursor: pointer; font-weight: 600; }
-    .todo { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 6px 0; }
-    .todo li { list-style: none; padding: 10px 16px; border-bottom: 1px solid #222; font-size: 13px; }
-    .todo li:last-child { border-bottom: 0; }
-    code { font-size: 12px; color: #c8c8c8; }
-    hr { border: 0; border-top: 1px solid var(--border); margin: 28px 0; }
-    @media (max-width: 720px) {
-      .scores, .grid2, .grid3 { grid-template-columns: 1fr 1fr; }
-      .grid3 { grid-template-columns: 1fr; }
+    .bar-row { display: grid; grid-template-columns: 220px 1fr 64px; gap: 10px; align-items: center; margin: 8px 0; font-size: 13px; }
+    .bar { height: 10px; background: #2a1515; border-radius: 6px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--red); }
+    .hours { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 700px) {
+      .hours { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr; }
     }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .todo { list-style: none; padding: 0; margin: 0; }
+    .todo li {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+    .todo b { color: var(--muted); margin-right: 8px; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Kemitt product audit</h1>
-    <p class="sub">Flutter furniture marketplace (Egypt + Saudi), version 3.0.8+314. Static review of 369 Dart files — performance, checkout conversion, and shopper UX. Not production telemetry.</p>
+    <div class="row">
+      <h1>Kemitt speed and product audit</h1>
+      <span class="pill active">18 Aug 2026</span>
+    </div>
+    <p class="sub">Bitbucket kemitt-api, kemitt-website, kemitt-dashboard, and the Flutter client of api.kemitt.com / api.kemitt.sa. Code review of latency and conversion. No production traces. No credit for unreported mobile work.</p>
 
     <div class="callout">
-      <div class="t">Biggest leak</div>
-      Shoppers can add to a guest cart, but checkout jumps to the Account tab with no sign-in prompt, and checkout itself can omit a missing address. That is the highest-revenue defect in this codebase.
+      The shop is slow because kemitt-api writes Redis for home/PDP/categories and never reads it, list aggregations join the whole catalog before pagination, and every product card re-queries offers. Flutter splash still waits on ~10 GraphQL calls. kemitt.com SSR fans out seven more. Furniture photos are original files on the CDN.
     </div>
 
-    <div class="scores">
-      <div class="stat warn"><div class="n">52</div><div class="l">Overall (code review)</div></div>
-      <div class="stat bad"><div class="n">46</div><div class="l">Performance</div></div>
-      <div class="stat warn"><div class="n">51</div><div class="l">UX</div></div>
-      <div class="stat warn"><div class="n">58</div><div class="l">Business</div></div>
+    <div class="stats">
+      <div class="stat"><div class="v warn">36</div><div class="l">Overall</div></div>
+      <div class="stat"><div class="v danger">31</div><div class="l">Speed</div></div>
+      <div class="stat"><div class="v warn">40</div><div class="l">Business</div></div>
+      <div class="stat"><div class="v warn">42</div><div class="l">UX</div></div>
+      <div class="stat"><div class="v danger">22</div><div class="l">Security</div></div>
+      <div class="stat"><div class="v danger">slow</div><div class="l">Time-to-shop</div></div>
     </div>
-    <p class="tiny">Scores are qualitative from this review (0–100). Dual-market catalog, Elasticsearch, KSA BNPL, and add-to-cart polish pull the commercial score up; splash waterfall, image memory, and the checkout wall pull the rest down.</p>
+    <p class="tiny">Qualitative 0–100 from this review. Speed is the primary score. Latency estimates are from query shape (cache miss, N+1, payload), not APM.</p>
 
-    <h2>Conversion funnel health</h2>
-    <p class="tiny">Source: code review of kemitt 3.0.8+314 · 15 Aug 2026 · scale is reviewer judgment of implemented vs missing conversion mechanics, not live conversion rate.</p>
-    <div class="funnel">
-      <div class="bar-col"><div class="bar" style="height:72%">72</div><div class="bar-lab">Discovery</div></div>
-      <div class="bar-col"><div class="bar" style="height:61%">61</div><div class="bar-lab">PDP</div></div>
-      <div class="bar-col"><div class="bar" style="height:54%">54</div><div class="bar-lab">Cart</div></div>
-      <div class="bar-col"><div class="bar" style="height:38%">38</div><div class="bar-lab">Checkout</div></div>
-      <div class="bar-col"><div class="bar" style="height:42%">42</div><div class="bar-lab">Retention</div></div>
-    </div>
-
-    <div class="grid2" style="margin-top:28px">
-      <div>
-        <h3>Findings by domain</h3>
-        <div class="pie"></div>
-        <p class="legend"><span style="background:#4c8dff"></span>Performance 10 &nbsp; <span style="background:#e8a317"></span>UX 9 &nbsp; <span style="background:#7aa2c4"></span>Business 9</p>
-        <p class="tiny">Count of ranked findings in this review · n=28</p>
-      </div>
-      <div>
-        <h3>Findings by severity</h3>
-        <div class="sev-bars">
-          <div><div class="b" style="height:90px;background:var(--red)">9</div><div class="bar-lab">P0</div></div>
-          <div><div class="b" style="height:120px">15</div><div class="bar-lab">P1</div></div>
-          <div><div class="b" style="height:40px;background:var(--blue)">4</div><div class="bar-lab">P2</div></div>
-        </div>
-        <p class="tiny">P0 blocks conversion or causes jank/OOM · P1 leaks revenue or retention · P2 polish</p>
-      </div>
-    </div>
-
-    <hr />
-    <h2>What is already strong</h2>
-    <div class="grid3">
-      <div class="card"><h3>Discovery</h3><p class="tiny">Elasticsearch search, collections, Egypt filters, deep links for kemitt.com / kemitt.sa, designer/vendor pages.</p></div>
-      <div class="card"><h3>Commerce core</h3><p class="tiny">Variant PDP, guest fake cart, coupons, KSA Tabby/Tamara, COD, delivery-day estimates, bilingual AR/EN.</p></div>
-      <div class="card"><h3>Craft</h3><p class="tiny">Add-to-cart sheet + haptics, image shimmer, paginated PLP, offline gate, Sentry/Crashlytics/Analytics wired.</p></div>
-    </div>
-
-    <hr />
-    <div class="pills">
-      <strong style="font-size:12px">Domain</strong>
-      <button class="pill on" data-d="all">All</button>
-      <button class="pill" data-d="performance">Performance</button>
-      <button class="pill" data-d="ux">UX</button>
-      <button class="pill" data-d="business">Business</button>
-      <strong style="font-size:12px;margin-left:8px">Severity</strong>
-      <button class="pill on" data-s="all">All</button>
-      <button class="pill" data-s="P0">P0</button>
-      <button class="pill" data-s="P1">P1</button>
-      <button class="pill" data-s="P2">P2</button>
-    </div>
-    <p class="sub" id="count"></p>
+    <h2>Where time goes (order-of-magnitude, ms)</h2>
+    <p class="tiny">Additive leaks on a first session. Source: kemitt-api + kemitt-website + Flutter splash, 18 Aug 2026. Not p95 from production.</p>
+    <div class="bar-row"><div>Mongo /search</div><div class="bar"><span style="width:100%"></span></div><div>2000</div></div>
+    <div class="bar-row"><div>Flutter splash GraphQL</div><div class="bar"><span style="width:60%"></span></div><div>1200</div></div>
+    <div class="bar-row"><div>Original images</div><div class="bar"><span style="width:45%"></span></div><div>900</div></div>
+    <div class="bar-row"><div>API Redis miss (home×4)</div><div class="bar"><span style="width:40%"></span></div><div>800</div></div>
+    <div class="bar-row"><div>Website SSR fanout</div><div class="bar"><span style="width:18%"></span></div><div>350</div></div>
     <table>
-      <thead><tr><th>Sev</th><th>Domain</th><th>Finding</th><th>Why it matters</th></tr></thead>
-      <tbody id="rows"></tbody>
-    </table>
-
-    <h2>Evidence and fixes</h2>
-    <p class="tiny">Expand a finding for evidence and the recommended fix.</p>
-    <div id="details"></div>
-
-    <hr />
-    <h2>Suggested 90-day order</h2>
-    <ul class="todo">
-      <li>Week 1: Guest checkout / login sheet, checkout address empty state, FIRST_TIME onboarding, KSA purchase currency</li>
-      <li>Week 2: translate() cache, splash to Home with skeletons, hoist GraphQL client, memCacheWidth on CustomImage</li>
-      <li>Weeks 3–4: Search empty/error, Collections icon swap, installment badge gating, begin_checkout + payment analytics, Sentry replay 1–5%</li>
-      <li>Month 2: Real reviews, unify EG/SA filters, push deep links, coupon before payment, R8 + drop integration_test from release</li>
-      <li>Month 3: Referral capture, KSA cart upsells, recently viewed, reorder, 48dp a11y pass, custom performance traces</li>
-    </ul>
-
-    <h2>Architecture snapshot</h2>
-    <table>
-      <thead><tr><th>Layer</th><th>Choice</th><th>Audit note</th></tr></thead>
+      <thead><tr><th>Leak</th><th>Est. ms</th><th>Why</th></tr></thead>
       <tbody>
-        <tr><td>State</td><td>14 ChangeNotifiers + Provider</td><td>Wide context.watch on Home and product cards causes grid-wide rebuilds</td></tr>
-        <tr><td>Nav</td><td>go_router + indexedStack tabs</td><td>Tabs stay alive (good UX, higher baseline memory)</td></tr>
-        <tr><td>API</td><td>GraphQL (catalog) + Chopper (cart/orders)</td><td>Client rebuilt in build(); no timeout/retry link</td></tr>
-        <tr><td>Markets</td><td>EG (EGP) + SA (SAR)</td><td>KSA payments hardcoded; Egypt from GraphQL; filters diverge</td></tr>
-        <tr><td>Observability</td><td>Sentry, Crashlytics, Analytics, Clarity, Facebook</td><td>Replay 100%; KSA purchase value wrong; Mixpanel keys unused</td></tr>
+        <tr><td>API Redis miss (home×4)</td><td>800</td><td>Reads commented out; aggregations + N+1 field resolvers</td></tr>
+        <tr><td>Website SSR fanout</td><td>350</td><td>Sequential nuxtServerInit + 7 GraphQL POSTs</td></tr>
+        <tr><td>Flutter splash GraphQL</td><td>1200</td><td>~10 calls before Home on Egyptian RTT</td></tr>
+        <tr><td>Original images</td><td>900</td><td>Full S3 objects; ?class= is not resize</td></tr>
+        <tr><td>Mongo /search</td><td>2000</td><td>Unpaginated regex; ES unused on submit</td></tr>
       </tbody>
     </table>
 
-    <div class="callout info" style="margin-top:28px">
-      <div class="t">Scope</div>
-      Reviewed the Flutter app at Desktop/work/kemitt. Website, CMS, and backend GraphQL resolvers were not in this repo. Connected Sentry org (delatylabs) has no Kemitt project, so this page does not include live crash or trace rates.
+    <h2>First-session call graph</h2>
+    <table>
+      <thead><tr><th>Surface</th><th>Before first useful paint</th><th>Cache</th></tr></thead>
+      <tbody>
+        <tr><td>Flutter splash</td><td>Auth, cart, 4 home product queries, settings, sliders, banners, collections, categories, cities</td><td>Client Hive only; API home Redis GET commented out</td></tr>
+        <tr><td>kemitt.com /</td><td>nuxtServerInit: categories → settings → user → cart, then 7 GraphQL POSTs</td><td>No Apollo cache. getCategories Redis GET commented out</td></tr>
+        <tr><td>PDP</td><td>getProductById aggregation + field resolvers; original images</td><td>Redis SET only</td></tr>
+        <tr><td>Search submit</td><td>globalSearch Mongo regex, unpaginated</td><td>Header typeahead uses ES; /search does not</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Conversion still open</h2>
+    <table>
+      <thead><tr><th>Flutter / website expect</th><th>kemitt-api</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr class="p0"><td>POST /payment/auth/ (Saudi Flutter)</td><td>Only /auth/v2 mounted; EGP Paymob</td><td>KSA app checkout</td></tr>
+        <tr class="p0"><td>Guest pay</td><td>Guest cart 24h; payment needs JWT</td><td>Login wall</td></tr>
+        <tr class="p0"><td>createProductReview / getProductReviews</td><td>addReview / getCommentReviews</td><td>No PDP ratings on app</td></tr>
+        <tr class="p1"><td>replaceFakeCart merge</td><td>deleteMany other carts</td><td>Cart loss on login</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Findings</h2>
+    <div class="row" id="layers"></div>
+    <div class="row" id="domains" style="margin-top:8px"></div>
+    <p class="tiny" id="count"></p>
+    <table>
+      <thead><tr><th>Sev</th><th>Layer</th><th>Finding</th><th>Why it is slow or leaks money</th></tr></thead>
+      <tbody id="findings"></tbody>
+    </table>
+    <h3>Evidence and fix</h3>
+    <table>
+      <thead><tr><th>Finding</th><th>Evidence</th><th>Fix</th></tr></thead>
+      <tbody id="fixes"></tbody>
+    </table>
+
+    <h2>Hours to report (no mobile work started)</h2>
+    <div class="hours">
+      <div class="card">
+        <h3>Speed (API + web + app)</h3>
+        <div class="v danger" style="font-size:28px;font-weight:700">96–140</div>
+        <p class="tiny">Turn Redis reads on, paginate aggregations, kill card N+1, slim list GraphQL, CDN image sizes, ES search, splash after auth, R8. First number for the business owner.</p>
+      </div>
+      <div class="card">
+        <h3>Conversion + security on kemitt-api</h3>
+        <div class="v warn" style="font-size:28px;font-weight:700">160–200</div>
+        <p class="tiny">SAR payment, guest checkout, reviews contract, register/JWT/PII, cart ownership. Separate from speed.</p>
+      </div>
     </div>
-    <p class="tiny">Source: lib/, android/app/build.gradle, pubspec.yaml · Kemitt 3.0.8+314 · 15 Aug 2026</p>
+
+    <h3>Speed breakdown</h3>
+    <table>
+      <thead><tr><th>Work</th><th>Hours</th><th>Expected effect</th></tr></thead>
+      <tbody>
+        <tr><td>Uncomment Redis GET on home ×4, PDP, categories, availableProducts</td><td>8–16</td><td>Home TTFB on warm cache ~ms instead of aggregations</td></tr>
+        <tr><td>$skip/$limit before $lookup; $facet count/priceRange</td><td>32–48</td><td>List TTFB stays flat as catalog grows</td></tr>
+        <tr><td>Stop hasOffer/totalDiscount Mongo per card</td><td>8–16</td><td>Drops ~80–170 queries per home</td></tr>
+        <tr><td>List GraphQL fragment + CDN width/WebP</td><td>24–40</td><td>LCP / scroll jank</td></tr>
+        <tr><td>Website: parallel nuxtServerInit, batch home query, ES /search</td><td>16–24</td><td>SSR TTFB + search</td></tr>
+        <tr><td>Flutter: route before home feeds; Selector; R8</td><td>16–24</td><td>Time-to-shop on device</td></tr>
+        <tr><td>Dashboard cap 50–100; stop limit 10000</td><td>8</td><td>Stops ops from melting shop Mongo</td></tr>
+      </tbody>
+    </table>
+    <p class="tiny">All-in if speed and conversion ship together: about 260–340 hours. Do speed first — Redis reads and aggregation order are the cheapest wins.</p>
+
+    <h2>Do this in order</h2>
+    <ol class="todo">
+      <li><b>1</b> Turn Redis reads back on for home sections, getProductById, getCategories</li>
+      <li><b>2</b> Paginate aggregations before lookups; stop per-card offer/collection queries</li>
+      <li><b>3</b> Serve resized product images; slim home/PLP GraphQL to one image + price</li>
+      <li><b>4</b> Point website /search at Elasticsearch; parallelize nuxtServerInit</li>
+      <li><b>5</b> Flutter: show Home before the 10 splash queries finish; enable R8</li>
+      <li><b>6</b> Then conversion: lock register, SAR payment, guest pay, order-gated reviews</li>
+    </ol>
   </div>
   <script>
     const FINDINGS = [
-      {severity:"P0",domain:"business",title:"Guest checkout is a dead end",impact:"Highest-intent users tap Next step and land on the Account tab with no login prompt. Fake cart already works; the wall is only at checkout.",evidence:"_jumpToLoginScreen() only calls goToTab(context, 4).",file:"lib/screens/cart/Cart.dart:473",fix:"Show a sign-in sheet with return path to checkout. Prefer guest checkout (email + phone + address) and merge the fake cart after account creation."},
-      {severity:"P0",domain:"ux",title:"Checkout hides a missing shipping address",impact:"Complete Order still renders when address is null. Users can attempt payment with nowhere to deliver a sofa.",evidence:"AddressContainer only if address != null; else SizedBox().",file:"lib/screens/checkout/checkout_screen.dart:162",fix:"Empty-state CTA to add an address. Disable the order FAB until address and payment method are valid."},
-      {severity:"P0",domain:"ux",title:"First-run intro never shows",impact:"FIRST_TIME defaults to false and is never set true. New users skip country/language onboarding and may browse the wrong catalog (EG vs SA).",evidence:"getBool(FIRST_TIME) ?? false; only IntroSlider writes the flag (to false).",file:"lib/screens/SplashScreen.dart:251",fix:"Treat unset as first run. Collect country + language before Home. Persist once."},
-      {severity:"P0",domain:"business",title:"KSA purchases log Egypt price",impact:"Firebase/Meta ROAS for Saudi is wrong. logPurchase always uses totalPriceEg even when the order is SAR.",evidence:"cartTotalPrice = cart.totalPriceEg!.toDouble();",file:"lib/providers/analytics/AnalyticsProvider.dart:219",fix:"Branch on settingProvider.isSaudi for value and currency, matching startCheckout."},
-      {severity:"P0",domain:"performance",title:"Every translate() reloads language JSON",impact:"~270 call sites fire an async asset load + json.decode on the UI isolate. Jank and racey string maps during scroll and checkout.",evidence:"translate() calls initialize() which loadString + json.decode every time.",file:"lib/providers/dependency_manager/localization_provider/localization_providers/ApplicationLocalizations.dart:31",fix:"Load once in the LocalizationsDelegate. Make translate() a map lookup."},
-      {severity:"P0",domain:"performance",title:"Splash blocks Home on 10+ network calls",impact:"Time-to-shop waits on auth, cart, four home feeds, then five settings/banner/collection calls. First session feels slow on Egyptian mobile networks.",evidence:"_initializeServices awaits feeds then website settings before _decideRoute.",file:"lib/screens/SplashScreen.dart:115",fix:"Route after auth/country. Stream home sections in with skeletons. Keep legal/push deferred."},
-      {severity:"P0",domain:"performance",title:"GraphQL client rebuilt inside build()",impact:"Watching auth/locale/country reconstructs GraphQLClient + HiveStore, dropping cache and reconnecting.",evidence:"ClientProvider constructed inside _MyAppState.build after context.watch.",file:"lib/app.dart:174",fix:"Hoist the client. Refresh token without tearing down the widget."},
-      {severity:"P0",domain:"performance",title:"Product images decode at full resolution",impact:"Furniture photography is huge. CachedNetworkImage never sets memCacheWidth/Height. Grids will OOM and scroll-jank on mid-range Androids.",evidence:"No memCacheWidth/Height anywhere in lib/. CustomImage passes raw CDN URLs.",file:"lib/widgets/CustomImage.dart:88",fix:"Decode to display size. Request resized CDN URLs. Replace remaining Image.network calls."},
-      {severity:"P0",domain:"business",title:"No real product reviews",impact:"Furniture is high-consideration. ProductReviewCard is hardcoded placeholder copy. Order review UI is unused.",evidence:"ProductRate builds const ProductReviewCard() with fake name/price.",file:"lib/widgets/ProductReviewCard.dart:62",fix:"Ratings on PLP/PDP. Post-delivery review prompt from orders."},
-      {severity:"P1",domain:"ux",title:"Search failure looks like an empty app",impact:"Zero hits and API errors both render Container(). Users assume search is broken.",evidence:"queryResultSet.isEmpty → Container(); catch clears results with no message.",file:"lib/screens/SearchScreen.dart:136",fix:"Localized empty state, suggested categories, retry. Keep recent searches."},
-      {severity:"P1",domain:"business",title:"PDP always promises monthly installments",impact:"Badge is unconditional. KSA methods are hardcoded (PayTabs/Tabby/Tamara/COD); Egypt comes from GraphQL. Trust breaks if checkout does not match the badge.",evidence:"BadgesRow always shows monthlyInstallment. PaymentRepository hardcodes SAUDI_PAYMENT_LIST for KSA.",file:"lib/screens/detailed_product/widgets/badges_row.dart:46",fix:"Show the badge only when an installment method is available for that market and cart total."},
-      {severity:"P1",domain:"performance",title:"Home rebuilds on every ProductsProvider notify",impact:"Splash fires ~19 notifyListeners while four feeds load. Entire CustomScrollView rebuilds each time.",evidence:"context.watch<ProductsProvider>() at top of Home.build.",file:"lib/screens/Home.dart:204",fix:"Selector/Consumer per section. Batch provider updates."},
-      {severity:"P1",domain:"performance",title:"29 shrinkWrap lists inside scroll views",impact:"Nested ListView/GridView with shrinkWrap lays out every child. CategoryBannerList builds all tiles eagerly.",evidence:"29 shrinkWrap: true usages, including Home and CollectionGrid.",file:"lib/screens/Home.dart:643",fix:"SliverList/SliverGrid. GridView.builder for categories."},
-      {severity:"P1",domain:"performance",title:"Every product card watches the whole wishlist",impact:"Toggling one heart rebuilds every visible ProductCard.",evidence:"context.watch<UserProfileProvider>().isFavourite(primaryImageId)",file:"lib/widgets/product_card/product_card.dart:50",fix:"Selector keyed by image id, or pass isFav from a parent selector."},
-      {severity:"P1",domain:"ux",title:"KSA catalog filters are weaker than Egypt",impact:"Egypt gets price slider and attribute filters. Saudi uses a simpler tag/dialog path. Discovery quality splits by market.",evidence:"ProductsScreen branches; FilterScreen is Egypt-centric.",file:"lib/screens/ProductsScreen.dart",fix:"One filter UI. Gate capabilities on catalog fields, not country."},
-      {severity:"P1",domain:"ux",title:"Collections tab icons are swapped",impact:"Selected tab looks unselected. Wayfinding trust drops on every session.",evidence:"activeIcon: newUnselectedOffers, inactiveIcon: newSelectedOffers",file:"lib/screens/MainScreen.dart:122",fix:"Swap the two icon assignments."},
-      {severity:"P1",domain:"ux",title:"Accessibility is almost absent",impact:"Two Semantics usages in the whole app. Bottom-nav icons are 15×15. Labels go down to 6–8px. Screen readers cannot shop.",evidence:"MainScreen icon size; DefaultTextProvider tiny styles; no semanticLabel on cart/add-to-cart.",file:"lib/screens/MainScreen.dart",fix:"48dp targets, Semantics on controls, respect text scaler."},
-      {severity:"P1",domain:"ux",title:"Critical errors are English-only",impact:"Arabic users see Failed to load product, Error loading cart, No orders available at the worst moments.",evidence:"Hardcoded strings in DetailedProductScreen, Cart, checkout, MyOrders, Splash.",file:"lib/screens/DetailedProductScreen.dart",fix:"Move copy into ar.json / en.json. Never concatenate Error: ${e} into UI."},
-      {severity:"P1",domain:"performance",title:"Sentry replay samples 100% of sessions",impact:"sessionSampleRate 1.0 plus Clarity in release is CPU, memory, and bandwidth on every shopper. Traces are a sensible 10%.",evidence:"options.experimental.replay.sessionSampleRate = 1.0",file:"lib/main.dart:67",fix:"Replay at 1–5%. Keep error replay higher. Confirm Clarity is sampled."},
-      {severity:"P1",domain:"performance",title:"Release Android is unminified and ships test code",impact:"minifyEnabled false, shrinkResources false, releaseImplementation integration_test. Larger downloads, slower cold start.",evidence:"android/app/build.gradle release block.",file:"android/app/build.gradle:66",fix:"Enable R8. Drop integration_test from release. ABI-filter to arm64/armeabi-v7a."},
-      {severity:"P1",domain:"business",title:"Push taps do not open a screen",impact:"onMessageOpenedApp only debugPrints. Cart-abandon and promo campaigns cannot recover sessions.",evidence:"FirebaseMessaging.onMessageOpenedApp.listen → debugPrint('Message clicked!')",file:"lib/utilities/FirebasePushNotifications.dart:63",fix:"Route payloads through DeepLinkService (already used for kemitt.com / kemitt.sa)."},
-      {severity:"P1",domain:"business",title:"Checkout screen never logs begin_checkout",impact:"Funnel under-counts drops between cart CTA and payment. No add_payment_info either.",evidence:"startCheckout only in Cart._jumpToPaymentScreen.",file:"lib/screens/cart/Cart.dart:371",fix:"Fire logBeginCheckout on checkout mount. Log payment method selection."},
-      {severity:"P1",domain:"business",title:"Coupons blocked until payment method is chosen",impact:"Paid/coupon traffic cannot see the discount until they pick a method. Extra drop-off on a high-AOV cart.",evidence:"Apply button errors if selectedPaymentMethod == null.",file:"lib/screens/checkout/components/promo_code_section.dart:80",fix:"Apply coupon first; revalidate when the method changes."},
-      {severity:"P1",domain:"business",title:"Referral economics exist with no app UX",impact:"WebsiteSettings has referralCodeDiscount / referralCodeProfit. Account and checkout never capture or share a code.",evidence:"Fields in WebsiteSettings; no referral UI under lib/screens.",file:"lib/models/WebsiteSettings.dart",fix:"Code field at signup/checkout. Share sheet on the thank-you screen."},
-      {severity:"P2",domain:"ux",title:"Empty cart has no browse button",impact:"Wishlist empty state has Continue shopping. Cart does not. Dead tab.",evidence:"Empty cart copy only; Wishlist has a CTA.",file:"lib/screens/cart/Cart.dart",fix:"Primary button → Home or offers collection."},
-      {severity:"P2",domain:"ux",title:"Buy Now can send users to add-address incorrectly",impact:"Highest-intent PDP CTA may open MyAddress with ADD_ADDRESS even when addresses exist.",evidence:"_handleRouting / _jumpToMyAddressScreen in DetailedProductScreen.",file:"lib/screens/DetailedProductScreen.dart",fix:"Go to checkout when an address exists; add-address only when the list is empty."},
-      {severity:"P2",domain:"business",title:"Cart upsells are Egypt-only",impact:"Lower AOV in Saudi. The carousel is gated with !isSaudi.",evidence:"if (!settingProvider.isSaudi) UpSellingProducts()",file:"lib/screens/cart/Cart.dart:240",fix:"Enable You may also like for both markets; add PDP related items."},
-      {severity:"P2",domain:"performance",title:"GoRouter diagnostics on in release",impact:"debugLogDiagnostics: true logs every route in production. No custom Firebase Performance traces around splash or PLP.",evidence:"app.dart router setup.",file:"lib/app.dart:78",fix:"Gate with kDebugMode. Trace splash, home feeds, and pagination."}
+      { severity: "P0", domain: "performance", layer: "api", title: "Home and PDP Redis reads are commented out", impact: "kemitt-api still SETs Redis for home sections, getProductById, getCategories, and availableProducts, then ignores GET. Every app open and every kemitt.com home hit re-runs four heavy aggregations. Warm cache is wasted.", evidence: "graphql/product/resolver.js homeProductsWithCategorySectionOne ~1760: redis.get then // if (cached) return. Same at section two and both collection home queries. getProductById ~4210. graphql/categories/resolver.js ~28. router/availableProducts.js ~171.", fix: "Uncomment the GET returns. Keep TTL ~300s. Add country to availableProducts keys. Cache getSettings, banners, sliders." },
+      { severity: "P0", domain: "performance", layer: "api", title: "List aggregations $lookup the whole match set before $skip/$limit", impact: "filterProducts, collection/category lists, home sections, and searchProducts join images, users, categories, and offers for every matching SKU, then keep 7–20 rows. Catalog growth makes TTFB linear. Offer $lookup uses $expr (weak index use). Count and priceRange re-run the same pipeline sequentially.", evidence: "graphql/product/resolver.js filterProducts basePipeline ~269–397. Home section pipelines $lookup images then skip/limit. searchProducts lookups before $match pagination ~4640–4708.", fix: "Match, sort, skip, limit first. Then lookup for the page only. $facet for items + count + priceRange. Index offers by product + dates." },
+      { severity: "P0", domain: "performance", layer: "api", title: "Every product card re-queries offers and collections", impact: "hasOffer, totalDiscount, allPriceAfterOffer each hit Mongo per product even though the aggregation already computed offer. Four home sections × ~7 cards ≈ 80–170 extra queries on top of the aggregations. No DataLoader.", evidence: "graphql/product/resolver.js ProductType field resolvers ~6338–6350. product.helper.js getOfferDiscount / getCollectionDiscount CollectionModel.find / OfferModel.findOne per product.", fix: "Return aggregation fields as-is. Drop per-card resolvers on list queries. Use DataLoader only on PDP if needed." },
+      { severity: "P0", domain: "performance", layer: "mobile", title: "App splash still blocks Home on ~10 GraphQL calls", impact: "Time-to-shop waits on auth, cart, four home feeds, then settings, sliders, banners, collections, categories, cities. Egyptian mobile RTT makes this seconds. Home then rebuilds on every ProductsProvider notify while those feeds land.", evidence: "lib/screens/SplashScreen.dart _loadHomeProductFeeds (4 queries) then _loadCriticalWebsiteSettings (5 + categories + cities). lib/screens/Home.dart context.watch<ProductsProvider>() at top of build.", fix: "Route after auth/country. Stream home sections with skeletons. Selector per section. Do not wait cities/legal to show Home." },
+      { severity: "P0", domain: "performance", layer: "web", title: "kemitt.com SSR is a waterfall then seven unbatched GraphQL POSTs", impact: "nuxtServerInit runs getCategories → getSettings → user → cart in series. Home then fires 7 HTTP GraphQL posts with no Apollo cache. Sliders are find({}) then filtered in Vue. Logged-in cart populate is deep plus duplicate shipping resolvers.", evidence: "kemitt-website/store/index.js nuxtServerInit sequential. pages/_lang/index.vue asyncData Promise.all of 7 app.$client.query. plugins/apollo.js createHttpLink, no InMemoryCache. slider/resolver.js find({}).", fix: "Parallelize nuxtServerInit. One batched home document. Cache splash queries. Compute shipping once per cart." },
+      { severity: "P0", domain: "performance", layer: "web", title: "Product cards download original furniture photos", impact: "Formatter only rewrites host to images.kemitt.com. ?class=CategoryProduct is not a resize pipeline in this repo. S3 upload stores original bytes. Website product cards Swiper all images; home ships duplicate hero markup for tab and desktop so hidden imgs still download. LCP and scroll jank on 4G.", evidence: "handlers/Formatter.js getAssistUrl. kemitt-website/components/product.vue ?class=CategoryProduct + all images. pages/_lang/index.vue .tab and .desktop heroes. router/index.js multerUploadWithoutMinify when S3_ENABLED.", fix: "CDN variants (width/WebP). Cards: primary image only. Do not duplicate hidden hero imgs. Request resized URLs from Flutter too." },
+      { severity: "P0", domain: "performance", layer: "api", title: "Storefront /search uses unpaginated Mongo regex; Elasticsearch is unused there", impact: "Header typeahead hits ES. Submitting search runs globalSearch: lookup images/features for the catalog, then $regex, no $limit. Returns can include designer password. TTFB 1–8s+ as SKUs grow.", evidence: "graphql/globalSearch/resolver.js 47–157. kemitt-website pages/_lang/search.vue → GLOBAL_SEARCH. server/router/search.js ES is only /search/suggestions. handlers/elastic/elasticSync.js refresh: true on every product write.", fix: "Point /search at ES. Paginate. Stop refresh: true. Keep Mongo regex off the hot path." },
+      { severity: "P0", domain: "business", layer: "api", title: "Saudi Flutter checkout posts to a route that does not exist", impact: "Flutter Egypt → POST /payment/auth/v2. Flutter Saudi → POST /payment/auth/. kemitt-api only mounts /auth/v2. Website already sends both markets to /auth/v2, which still charges Paymob in EGP with hardcoded SAR FX 4.77.", evidence: "router/paymob.js only /auth/v2. Flutter CartRepository egypt → v2 else payment/auth/. Website payment.vue both branches /auth/v2. Functions.js sarToEgp = 4.77.", fix: "SAR-native /payment/auth/v2 (Tabby/Tamara/PayTabs). Point Flutter SA at that after FX/PSP is correct." },
+      { severity: "P0", domain: "business", layer: "api", title: "Product reviews Flutter needs are not on kemitt-api", impact: "Furniture is high-consideration. API has addReview / getCommentReviews (tickets/comments, no order, no average, no pagination, no isEnabled). Website PDP uses getCommentReviews. Flutter calls createProductReview / getProductReviews / getReviewsByOrder.", evidence: "graphql/review/schema.graphql. models/Review.js type comment|discussion|postComment, no order field. kemitt-website products/_id.vue getCommentReviews.", fix: "Order-gated createProductReview, paginated getProductReviews with averageRating, getReviewsByOrder, isEnabled moderation." },
+      { severity: "P0", domain: "business", layer: "api", title: "Guest carts exist; paying still requires a JWT", impact: "Guest cart TTL is 24h. /payment/auth/v2 needs a User + address on that user. createPayment sets customer: currentUser.id. /v1/create/order is WaffarX, not shopper checkout. replaceFakeCart deleteMany wipes the account cart on login.", evidence: "models/Cart.js user null + TTL. paymob.js JWT. cart/resolver.js replaceFakeCart deleteMany. router/availableProducts.js POST /v1/create/order.", fix: "Guest checkout payload on /payment. Merge cart lines instead of deleteMany. Bind cartId to JWT or a signed guest token." },
+      { severity: "P0", domain: "security", layer: "api", title: "Public register accepts privilageType including superAdmin", impact: "Anyone can mint an admin. GraphQL playground and introspection are on. getUserById is unauthenticated and returns password hash, cards, addresses. JWTs never expire and embed the bcrypt hash.", evidence: "graphql/users/schema.graphql register(privilageType). users/resolver.js getUserById. handlers/Auth.js jwt.sign no expiresIn. handlers/Graphql.js playground: true.", fix: "Force empty privilageType on public register. Auth-gate getUserById to self. Strip password/CVV. JWT expiry. Disable playground in production." },
+      { severity: "P1", domain: "performance", layer: "ops", title: "Dashboard searchProducts with limit 10000–50000 saturates Mongo for shoppers too", impact: "Admin product/collection/offer screens pull 10k–50k SKUs with descriptions, features, revenues. Same aggregation as shop search. Redis stores that blob. Concurrent ops work raises storefront TTFB.", evidence: "kemitt-dashboard pages/admin/product/index.vue limit 10000 / export 50000. collection/add.vue 10000. searchProducts TTL 3000s.", fix: "Cap at 50–100 + typeahead. Never share the shop aggregation with unbounded admin dumps." },
+      { severity: "P1", domain: "performance", layer: "web", title: "Home and PLP GraphQL ask for features, costs, and every image", impact: "Cards need name, price, one image, badges. Queries pull images[].features, manufacturing cost, site revenue. Payload hundreds of KB; Vue hydrate jank. Flutter home feeds hit the same fat API.", evidence: "kemitt-website/graphql/query/product.js home + GET_PRODUCTS_BY_CATEGORY_ID. Flutter ProductsQueries for Egypt/Saudi home sections.", fix: "List fragment: id, name, priceAfterOffer, primary image, badges. Features only on PDP." },
+      { severity: "P1", domain: "performance", layer: "mobile", title: "Release Android is unminified", impact: "minifyEnabled false, shrinkResources false. Larger download and slower cold start on mid-range Androids. Nested shrinkWrap lists still lay out every child on Home/collections.", evidence: "android/app/build.gradle release block. lib/screens/home/widgets/CollectionGrid.dart shrinkWrap true. Home watches full ProductsProvider.", fix: "Enable R8. SliverGrid for collections. Selector per home section." },
+      { severity: "P1", domain: "performance", layer: "web", title: "Storefront loads GTM, Hotjar, TikTok, Adroll, Sentry at 100% traces", impact: "Main-thread and TTI lose 0.5–2s after HTML. Sentry tracesSampleRate 1.0 on SSR. Google Fonts CSS in head.", evidence: "kemitt-website/nuxt.config.js GTM, recaptcha, adroll, hotjar, tiktok, Convertful, Waffarad, Sympl. Sentry tracesSampleRate: 1.0.", fix: "Defer non-GTM tags. Sentry traces 5–10%. Self-host or subset fonts." },
+      { severity: "P1", domain: "security", layer: "api", title: "Cart and checkout trust raw cartId; shipping resolvers duplicate work", impact: "addToCart / getCartById / replaceFakeCart have no JWT check. allShippingFees and requiredTimeForCountry each load user + zone. WeightModel.find() on every cart. Regex zone match.", evidence: "graphql/cart/resolver.js getCartById, addToCart, replaceFakeCart, allShippingFees, requiredTimeForCountry. paymob.js no cart.user === user._id.", fix: "Bind cart to JWT or signed guest token. Compute shipping once. Cache weight table." }
     ];
-    let domain = "all", severity = "all";
-    function filtered() {
-      return FINDINGS.filter(f => (domain === "all" || f.domain === domain) && (severity === "all" || f.severity === severity));
+    let layer = "all";
+    let domain = "all";
+    const layers = ["all", "api", "web", "mobile", "ops"];
+    const domains = ["all", "performance", "business", "ux", "security"];
+    const labels = { all: "all", performance: "speed", business: "business", ux: "ux", security: "security" };
+    function pills(el, items, current, set, map) {
+      el.innerHTML = items.map((i) => `<button class="pill ${current === i ? "active" : ""}" data-v="${i}">${map ? map[i] : i}</button>`).join("");
+      el.querySelectorAll("button").forEach((b) => b.onclick = () => { set(b.dataset.v); render(); });
     }
     function render() {
-      const list = filtered();
-      document.getElementById("count").textContent = list.length + " finding" + (list.length === 1 ? "" : "s") + (domain !== "all" ? " · " + domain : "") + (severity !== "all" ? " · " + severity : "");
-      document.getElementById("rows").innerHTML = list.map(f => `<tr class="${f.severity.toLowerCase()}"><td>${f.severity}</td><td>${f.domain}</td><td>${f.title}</td><td>${f.impact}</td></tr>`).join("");
-      document.getElementById("details").innerHTML = list.map(f => `<details><summary>${f.severity}  ${f.title} <span class="tiny">${f.domain}</span></summary><p>${f.impact}</p><p class="tiny">${f.evidence}</p><p class="tiny"><code>${f.file}</code></p><p class="tiny">${f.fix}</p></details>`).join("");
+      pills(document.getElementById("layers"), layers, layer, (v) => layer = v);
+      pills(document.getElementById("domains"), domains, domain, (v) => domain = v, labels);
+      const filtered = FINDINGS.filter((f) => (layer === "all" || f.layer === layer) && (domain === "all" || f.domain === domain));
+      const p0 = filtered.filter((f) => f.severity === "P0").length;
+      document.getElementById("count").textContent = `Showing ${filtered.length} · ${p0} P0 · ${filtered.length - p0} P1`;
+      document.getElementById("findings").innerHTML = filtered.map((f) => `<tr class="${f.severity.toLowerCase()}"><td>${f.severity}</td><td>${f.layer}</td><td>${f.title}</td><td>${f.impact}</td></tr>`).join("");
+      document.getElementById("fixes").innerHTML = filtered.map((f) => `<tr><td>${f.title}</td><td>${f.evidence}</td><td>${f.fix}</td></tr>`).join("");
     }
-    document.querySelectorAll(".pill").forEach(btn => {
-      btn.addEventListener("click", () => {
-        if (btn.dataset.d) {
-          domain = btn.dataset.d;
-          document.querySelectorAll("[data-d]").forEach(b => b.classList.toggle("on", b === btn));
-        }
-        if (btn.dataset.s) {
-          severity = btn.dataset.s;
-          document.querySelectorAll("[data-s]").forEach(b => b.classList.toggle("on", b === btn));
-        }
-        render();
-      });
-    });
     render();
   </script>
 </body>
